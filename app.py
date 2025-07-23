@@ -65,22 +65,22 @@ st.subheader("Conceptual LP Formulation:")
 st.markdown(
     """
     Let:
-    * `x1` = Number of employees on Shift 1
-    * `x2` = Number of employees on Shift 2
+    * `$x_1$` = Number of employees on Shift 1
+    * `$x_2$` = Number of employees on Shift 2
 
     **Objective Function (Minimize Total Employees):**
     `Min Z = x1 + x2`
 
     **Constraints:**
     * **Morning (8 AM - 12 PM):** Employees on S1 cover this.
-        `x1 >= 2`
+        `$x_1 \ge 2$`
     * **Afternoon (12 PM - 4 PM):** Employees on S1 and S2 cover this.
-        `x1 + x2 >= 3`
+        `$x_1 + x_2 \ge 3$`
     * **Evening (4 PM - 8 PM):** Employees on S2 cover this.
-        `x2 >= 2`
+        `$x_2 \ge 2$`
     * **Non-negativity:**
-        `x1 >= 0, x2 >= 0`
-        (Also, x1 and x2 should ideally be integers for real-world application, making it an Integer Linear Programming problem.)
+        `$x_1 \ge 0, x_2 \ge 0$`
+        (Also, `$x_1$` and `$x_2$` should ideally be integers for real-world application, making it an Integer Linear Programming problem.)
     """
 )
 
@@ -114,9 +114,9 @@ if LpStatus[prob.status] == "Optimal":
     optimal_x1 = x1.varValue
     optimal_x2 = x2.varValue
     optimal_obj_val = value(prob.objective)
-    st.write(f"Number of employees for Shift 1: **{optimal_x1}**")
-    st.write(f"Number of employees for Shift 2: **{optimal_x2}**")
-    st.write(f"**Minimum Total Employees Needed: {optimal_obj_val}**")
+    st.write(f"Number of employees for Shift 1: **{int(optimal_x1)}**")
+    st.write(f"Number of employees for Shift 2: **{int(optimal_x2)}**")
+    st.write(f"**Minimum Total Employees Needed: {int(optimal_obj_val)}**")
 else:
     st.warning(f"No optimal solution found. Status: {LpStatus[prob.status]}")
 
@@ -129,7 +129,7 @@ st.markdown("---")
 st.header("Feasible Region Graph")
 st.write(
     "The graph below illustrates the feasible region defined by the constraints, "
-    "representing all possible combinations of x1 and x2 that satisfy the requirements. "
+    "representing all possible combinations of `$x_1$` and `$x_2$` that satisfy the requirements. "
     "The optimal solution is the point within this region that minimizes the objective function."
 )
 
@@ -147,8 +147,14 @@ ax.fill_betweenx(y, 0, 2, where=(x >= 0), color='red', alpha=0.15, label='Infeas
 
 # Constraint 2: x1 + x2 >= 3  => x2 >= 3 - x1
 line2_x2 = 3 - x
+# Ensure the fill only happens for relevant parts
 ax.plot(x, line2_x2, color='green', linestyle='--', label='$x_1 + x_2 \ge 3$')
-ax.fill_between(x, y_min, line2_x2, where=(line2_x2 > y_min), color='purple', alpha=0.15, label='Infeasible (C2)')
+# We need to fill below the line where it's greater than y_min and above the line where it's less than y_max, etc.
+# More robust way to shade infeasible region for x1 + x2 >= 3
+x_fill = np.linspace(x_min, x_max, 100)
+y_fill_c2 = 3 - x_fill
+ax.fill_between(x_fill, y_min, y_fill_c2, where=(y_fill_c2 >= y_min) & (x_fill >= x_min), color='purple', alpha=0.15, label='Infeasible (C2)')
+
 
 # Constraint 3: x2 >= 2
 ax.axhline(y=2, color='blue', linestyle='--', label='$x_2 \ge 2$')
@@ -164,19 +170,30 @@ ax.set_title('Feasible Region for Cafe Staffing Problem')
 ax.grid(True, linestyle=':', alpha=0.7)
 
 # Add Feasible Region Label (conceptually, where all non-shaded areas overlap)
+# Adjust position to be within the expected feasible region
 ax.text(3.5, 4.5, 'Feasible Region', color='black', fontsize=12,
         bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
 
 # Highlight Optimal Point
 if optimal_x1 is not None and optimal_x2 is not None:
-    ax.plot(optimal_x1, optimal_x2, 'o', color='red', markersize=10, label=f'Optimal Point ({optimal_x1}, {optimal_x2})', zorder=5)
+    # Ensure integers for plotting the optimal point as it's an LpInteger problem
+    optimal_x1_int = int(optimal_x1)
+    optimal_x2_int = int(optimal_x2)
+
+    ax.plot(optimal_x1_int, optimal_x2_int, 'o', color='red', markersize=10,
+            label=f'Optimal Point ({optimal_x1_int}, {optimal_x2_int})', zorder=5)
+
     # Add Objective Function line at optimal value
     obj_line_x = np.linspace(x_min, x_max, 100)
     obj_line_y = optimal_obj_val - obj_line_x
-    ax.plot(obj_line_x, obj_line_y, color='black', linestyle='-', linewidth=2, label=f'Objective Function (Z={optimal_obj_val})', zorder=4)
+    # Plot only within bounds
+    ax.plot(obj_line_x, obj_line_y, color='black', linestyle='-', linewidth=2,
+            label=f'Objective Function (Z={int(optimal_obj_val)})', zorder=4)
 
-ax.legend(loc='upper right', bbox_to_anchor=(1.4, 1)) # Adjust legend position
+# Adjust legend position to not obscure the graph
+ax.legend(loc='upper left', bbox_to_anchor=(1.05, 1), borderaxespad=0.)
 st.pyplot(fig)
+plt.close(fig) # IMPORTANT: Close the figure to prevent errors in Streamlit
 
 st.markdown("---")
 
@@ -194,9 +211,4 @@ st.markdown(
     5.  **Project Scheduling**: Optimizing the timeline and resource allocation for complex projects to meet deadlines and minimize costs.
     6.  **Energy Management Scheduling**: Planning the operation of power plants or energy consumption in industrial facilities to minimize costs or carbon emissions.
     7.  **Machine Scheduling**: Optimizing the sequence of jobs on machines to minimize completion time, maximize throughput, or reduce setup costs.
-    8.  **Classroom/University Timetabling**: Creating optimal class schedules that accommodate student and instructor preferences, room availability, and minimize conflicts.
-    9.  **Maintenance Scheduling**: Planning maintenance activities for equipment or infrastructure to minimize downtime and extend asset life.
-    10. **Event Scheduling**: Optimizing the timing and resource allocation for large-scale events, conferences, or sports tournaments to manage venues, staff, and participant flow.
-    """
-)
-st.markdown("---")
+    8.  **Classroom/University Timetabling**: Creating optimal class schedules that accommodate student and instructor preferences, room availability, and minimize
