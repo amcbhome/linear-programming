@@ -195,8 +195,7 @@ ax.legend(loc='upper left', bbox_to_anchor=(1.05, 1), borderaxespad=0.)
 st.pyplot(fig)
 plt.close(fig) # IMPORTANT: Close the figure to prevent errors in Streamlit
 
-st.markdown("---")
-
+st.markdown("---") # This is line 204 in the provided complete code.
 
 # --- Top 10 Uses Section ---
 st.header("Top 10 Uses of Linear Programming in Scheduling")
@@ -211,4 +210,9 @@ st.markdown(
     5.  **Project Scheduling**: Optimizing the timeline and resource allocation for complex projects to meet deadlines and minimize costs.
     6.  **Energy Management Scheduling**: Planning the operation of power plants or energy consumption in industrial facilities to minimize costs or carbon emissions.
     7.  **Machine Scheduling**: Optimizing the sequence of jobs on machines to minimize completion time, maximize throughput, or reduce setup costs.
-    8.  **Classroom/University Timetabling**: Creating optimal class schedules that accommodate student and instructor preferences, room availability, and minimize
+    8.  **Classroom/University Timetabling**: Creating optimal class schedules that accommodate student and instructor preferences, room availability, and minimize conflicts.
+    9.  **Maintenance Scheduling**: Planning maintenance activities for equipment or infrastructure to minimize downtime and extend asset life.
+    10. **Event Scheduling**: Optimizing the timing and resource allocation for large-scale events, conferences, or sports tournaments to manage venues, staff, and participant flow.
+    """
+)
+st.markdown("---")
