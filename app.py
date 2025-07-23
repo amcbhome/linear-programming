@@ -147,9 +147,7 @@ ax.fill_betweenx(y, 0, 2, where=(x >= 0), color='red', alpha=0.15, label='Infeas
 
 # Constraint 2: x1 + x2 >= 3  => x2 >= 3 - x1
 line2_x2 = 3 - x
-# Ensure the fill only happens for relevant parts
 ax.plot(x, line2_x2, color='green', linestyle='--', label='$x_1 + x_2 \ge 3$')
-# We need to fill below the line where it's greater than y_min and above the line where it's less than y_max, etc.
 # More robust way to shade infeasible region for x1 + x2 >= 3
 x_fill = np.linspace(x_min, x_max, 100)
 y_fill_c2 = 3 - x_fill
@@ -170,7 +168,6 @@ ax.set_title('Feasible Region for Cafe Staffing Problem')
 ax.grid(True, linestyle=':', alpha=0.7)
 
 # Add Feasible Region Label (conceptually, where all non-shaded areas overlap)
-# Adjust position to be within the expected feasible region
 ax.text(3.5, 4.5, 'Feasible Region', color='black', fontsize=12,
         bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
 
@@ -195,7 +192,7 @@ ax.legend(loc='upper left', bbox_to_anchor=(1.05, 1), borderaxespad=0.)
 st.pyplot(fig)
 plt.close(fig) # IMPORTANT: Close the figure to prevent errors in Streamlit
 
-st.markdown("---") # This is line 204 in the provided complete code.
+st.markdown("---")
 
 # --- Top 10 Uses Section ---
 st.header("Top 10 Uses of Linear Programming in Scheduling")
