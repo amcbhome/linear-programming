@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
 from pulp import *
-import matplotlib.pyplot as plt
-import numpy as np
+# Removed: import matplotlib.pyplot as plt
+# Removed: import numpy as np
 
 # --- Page Configuration ---
 st.set_page_config(
@@ -46,7 +46,7 @@ st.subheader("Requirements:")
 st.markdown(
     """
     * **Morning (8 AM - 12 PM):** At least 2 staff
-    * **Afternoon (12 PM - 4 PM):** At least 3 staff
+    * **Afternoon (12 PM - 4 PM)::** At least 3 staff
     * **Evening (4 PM - 8 PM):** At least 2 staff
     """
 )
@@ -125,74 +125,8 @@ st.write(
 )
 st.markdown("---")
 
-# --- Feasible Region Graph ---
-st.header("Feasible Region Graph")
-st.write(
-    "The graph below illustrates the feasible region defined by the constraints, "
-    "representing all possible combinations of `$x_1$` and `$x_2$` that satisfy the requirements. "
-    "The optimal solution is the point within this region that minimizes the objective function."
-)
-
-fig, ax = plt.subplots(figsize=(8, 6))
-
-# Define range for x and y
-x_min, x_max = 0, 6
-y_min, y_max = 0, 6
-x = np.linspace(x_min, x_max, 500)
-y = np.linspace(y_min, y_max, 500)
-
-# Constraint 1: x1 >= 2
-ax.axvline(x=2, color='gray', linestyle='--', label='$x_1 \ge 2$')
-ax.fill_betweenx(y, 0, 2, where=(x >= 0), color='red', alpha=0.15, label='Infeasible (C1)')
-
-# Constraint 2: x1 + x2 >= 3  => x2 >= 3 - x1
-line2_x2 = 3 - x
-ax.plot(x, line2_x2, color='green', linestyle='--', label='$x_1 + x_2 \ge 3$')
-# More robust way to shade infeasible region for x1 + x2 >= 3
-x_fill = np.linspace(x_min, x_max, 100)
-y_fill_c2 = 3 - x_fill
-ax.fill_between(x_fill, y_min, y_fill_c2, where=(y_fill_c2 >= y_min) & (x_fill >= x_min), color='purple', alpha=0.15, label='Infeasible (C2)')
-
-
-# Constraint 3: x2 >= 2
-ax.axhline(y=2, color='blue', linestyle='--', label='$x_2 \ge 2$')
-ax.fill_between(x, 0, 2, where=(y >= 0), color='orange', alpha=0.15, label='Infeasible (C3)')
-
-
-# Set plot limits
-ax.set_xlim(x_min, x_max)
-ax.set_ylim(y_min, y_max)
-ax.set_xlabel('Employees on Shift 1 ($x_1$)')
-ax.set_ylabel('Employees on Shift 2 ($x_2$)')
-ax.set_title('Feasible Region for Cafe Staffing Problem')
-ax.grid(True, linestyle=':', alpha=0.7)
-
-# Add Feasible Region Label (conceptually, where all non-shaded areas overlap)
-ax.text(3.5, 4.5, 'Feasible Region', color='black', fontsize=12,
-        bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
-
-# Highlight Optimal Point
-if optimal_x1 is not None and optimal_x2 is not None:
-    # Ensure integers for plotting the optimal point as it's an LpInteger problem
-    optimal_x1_int = int(optimal_x1)
-    optimal_x2_int = int(optimal_x2)
-
-    ax.plot(optimal_x1_int, optimal_x2_int, 'o', color='red', markersize=10,
-            label=f'Optimal Point ({optimal_x1_int}, {optimal_x2_int})', zorder=5)
-
-    # Add Objective Function line at optimal value
-    obj_line_x = np.linspace(x_min, x_max, 100)
-    obj_line_y = optimal_obj_val - obj_line_x
-    # Plot only within bounds
-    ax.plot(obj_line_x, obj_line_y, color='black', linestyle='-', linewidth=2,
-            label=f'Objective Function (Z={int(optimal_obj_val)})', zorder=4)
-
-# Adjust legend position to not obscure the graph
-ax.legend(loc='upper left', bbox_to_anchor=(1.05, 1), borderaxespad=0.)
-st.pyplot(fig)
-plt.close(fig) # IMPORTANT: Close the figure to prevent errors in Streamlit
-
-st.markdown("---")
+# Removed: Feasible Region Graph Section
+# All code related to matplotlib plotting was removed from here.
 
 # --- Top 10 Uses Section ---
 st.header("Top 10 Uses of Linear Programming in Scheduling")
